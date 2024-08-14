@@ -1,3 +1,3 @@
-## BUSEASE
-# Bus Ticket Booking Platform 
+# BUSEASE
+## Bus Ticket Booking Platform 
 
