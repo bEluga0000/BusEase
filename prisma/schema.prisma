@@ -12,3 +12,36 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Company{
+  companyId String @id @default(uuid())
+  name String
+  totalNumber Int
+  bus Bus[]
+}
+
+model Bus{
+  busId String @id @default(uuid())
+  busNumber String 
+  busDriver String?
+  From String
+  Destination String
+  departureTime DateTime
+  reachTime DateTime
+  price Int
+  companyId String
+  comapny Company @relation(fields: [companyId],references: [companyId])
+  seats Seat[]
+}
+// Seat Schema
+enum Position {
+  ws
+  ms
+}
+model Seat{
+  seatId String @id 
+  position Position
+  datesBooked DateTime[]
+  busId String
+  bus Bus @relation(fields: [busId],references: [busId])
+}
