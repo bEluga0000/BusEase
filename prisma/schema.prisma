@@ -15,8 +15,9 @@ datasource db {
 
 model Company{
   companyId String @id @default(uuid())
-  name String
-  totalNumber Int
+  name String @unique
+  totalNumber Int @default(0)
+  userId String 
   bus Bus[]
 }
 
@@ -24,13 +25,13 @@ model Bus{
   busId String @id @default(uuid())
   busNumber String 
   busDriver String?
-  From String
-  Destination String
+  from String
+  destination String
   departureTime DateTime
   reachTime DateTime
   price Int
   companyId String
-  comapny Company @relation(fields: [companyId],references: [companyId])
+  comapny Company @relation(fields: [companyId],references: [companyId],onDelete: Cascade)
   seats Seat[]
 }
 // Seat Schema
@@ -39,9 +40,10 @@ enum Position {
   ms
 }
 model Seat{
-  seatId String @id 
+  seatId String @id @default(cuid())
   position Position
   datesBooked DateTime[]
   busId String
-  bus Bus @relation(fields: [busId],references: [busId])
+  seatNo Int 
+  bus Bus @relation(fields: [busId],references: [busId],onDelete: Cascade)
 }
