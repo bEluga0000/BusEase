@@ -36,3 +36,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 prisma/migrations/
+data
+app/api/v1/getAll
+app/addSeats
+
+

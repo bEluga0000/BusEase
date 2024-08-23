@@ -27,8 +27,8 @@ model Bus{
   busDriver String?
   from String
   destination String
-  departureTime DateTime
-  reachTime DateTime
+  departureTime String
+  journeyTime Float
   price Int
   companyId String
   comapny Company @relation(fields: [companyId],references: [companyId],onDelete: Cascade)
@@ -44,6 +44,6 @@ model Seat{
   position Position
   datesBooked DateTime[]
   busId String
-  seatNo Int 
+  seatNo Int @unique
   bus Bus @relation(fields: [busId],references: [busId],onDelete: Cascade)
 }

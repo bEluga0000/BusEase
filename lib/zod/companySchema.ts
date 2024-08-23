@@ -9,16 +9,25 @@ export const createBusSchema = z.object({
     from: z.string(),
     destination: z.string(),
     departureTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format"),
-    reachTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Invalid time format"),
+    journeyTime:z.number(),
     price: z.number(),
     companyId: z.string()
 })
-export const createSeatsSchema = z.array(
-    z.object({
-        position: z.enum(["ws", "ms"]).refine((val) => ["ws", "ms"].includes(val), {
-            message: "You can only add the string 'ws' or 'ms'",
-        }),
-        busId: z.string(),
-        seatNo: z.number(),
-    })
-)
+// odds or ws and evens are ms
+export const createSeatsSchema =z.object({
+    seats:z.array(
+        z.object({
+            position: z.enum(["ws", "ms"]).refine((val) => ["ws", "ms"].includes(val), {
+                message: "You can only add the string 'ws' or 'ms'",
+            }),
+            seatNo: z.number(),
+        })
+    )
+})
+export const getBusSchema = z.object({
+    companyId:z.string(),
+    busId:z.string().nullable().optional()
+})
+export const getCompanySchema = z.object({
+    companyId:z.string()
+})
