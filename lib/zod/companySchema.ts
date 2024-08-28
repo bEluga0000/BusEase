@@ -4,6 +4,7 @@ export const createCompanySchema = z.object({
     userId: z.string(),
 })
 // departureTime: "14:30"  or "2024-08-17T14:30:00Z" if using ISO format
+// KA-04-EA-2024 bus nuber
 export const createBusSchema = z.object({
     busNumber: z.string().regex(/^[A-Z]{2}-\d{2}-[A-Z]{2}-\d{4}$/, "Invalid bus number format"),
     from: z.string(),

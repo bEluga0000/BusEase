@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
             }
             else
             {
-                const buses = await prisma.bus.findMany({
+                const buses = await prisma.bus.findUnique({
                     where: {
                         companyId: parsedData.data.companyId,
                         busId:parsedData.data.busId

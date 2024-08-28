@@ -16,7 +16,7 @@ export async function POST(req:NextRequest) {
                 busId,
                 companyId
             }
-        })
+        }) 
         if(!bus)
             return NextResponse.json({ msg: "Bus not Found" }, { status: 404 })
         const seatsToCreate = parsedData.data.seats.map(seat => ({

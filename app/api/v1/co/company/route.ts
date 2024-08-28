@@ -13,6 +13,12 @@ export async function POST(req: NextRequest) {
                 data: {
                     userId: parsedData.data.userId,
                     name: parsedData.data.name
+                },include:{
+                    user:{
+                        select:{
+                            name:true
+                        }
+                    }
                 }
             })
             return NextResponse.json({ msg: "Company Thing", companyId:company.companyId })
@@ -35,6 +41,12 @@ export async function GET(req: NextRequest) {
             const company = await prisma.company.findUnique({
                 where: {
                     companyId:parsedData.data.companyId
+                },include:{
+                    user:{
+                        select:{
+                            name:true
+                        }
+                    }
                 }
             })
             if (!company)

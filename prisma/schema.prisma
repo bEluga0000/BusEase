@@ -24,7 +24,7 @@ model Company{
 
 model Bus{
   busId String @id @default(uuid())
-  busNumber String 
+  busNumber String @unique
   busDriver String?
   from String
   destination String
@@ -61,19 +61,20 @@ model User{
   company Company[]
 }
 
-enum Conformation {
+enum ConformationType{
   waitlist
   confirmed
   cancelled
+  paymentNotDone
 }
 model Ticket{
   id String @id @default(uuid())
-  conformation Conformation
+  conformation ConformationType @default(paymentNotDone)
   bookedDate DateTime @default(now())
   cancelledDate DateTime?
   refundId String? @unique
   refund Refund? @relation(fields: [refundId],references: [id])
-  PaymentId String @unique
+  PaymentId String? @unique
   payment Payment? @relation(fields: [PaymentId],references: [id])
   userId String
   user User @relation(fields: [userId],references: [id],onDelete: Cascade)

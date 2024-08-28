@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/db"
 export async function POST(req:NextResponse){
     try{
-        const data = req.json()
-        const parsedData = createUserSchema.safeParse(data)
+        const data = await req.json()
+        const parsedData =await createUserSchema.safeParse(data)
         if (!parsedData.success)
             return NextResponse.json({ msg: "Enter all the valid Inputs", err: parsedData.error.errors })
         else {
