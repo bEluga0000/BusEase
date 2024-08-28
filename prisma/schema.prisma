@@ -18,6 +18,7 @@ model Company{
   name String @unique
   totalNumber Int @default(0)
   userId String 
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
   bus Bus[]
 }
 
@@ -33,6 +34,7 @@ model Bus{
   companyId String
   comapny Company @relation(fields: [companyId],references: [companyId],onDelete: Cascade)
   seats Seat[]
+  ticket Ticket?
 }
 // Seat Schema
 enum Position {
@@ -46,4 +48,56 @@ model Seat{
   busId String
   seatNo Int @unique
   bus Bus @relation(fields: [busId],references: [busId],onDelete: Cascade)
+  ticket Ticket?
+}
+
+model User{
+  id String @id
+  name String
+  email String @unique
+  image String
+  createdAt DateTime @default(now())
+  tickets Ticket[]
+  company Company[]
+}
+
+enum Conformation {
+  waitlist
+  confirmed
+  cancelled
+}
+model Ticket{
+  id String @id @default(uuid())
+  conformation Conformation
+  bookedDate DateTime @default(now())
+  cancelledDate DateTime?
+  refundId String? @unique
+  refund Refund? @relation(fields: [refundId],references: [id])
+  PaymentId String @unique
+  payment Payment? @relation(fields: [PaymentId],references: [id])
+  userId String
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  seatId String @unique
+  seat Seat @relation(fields: [seatId],references: [seatId])
+  busId String @unique
+  bus Bus @relation(fields: [busId],references: [busId])
+}
+
+enum Methods{
+  upi
+  debit
+  credit
+}
+model Refund{
+  id String @id @default(uuid())
+  Amount Int
+  Method Methods
+  ticket Ticket?
+}
+
+model Payment{
+  id String @id @default(uuid())
+  Amount Int
+  Method Methods
+  ticket Ticket?
 }

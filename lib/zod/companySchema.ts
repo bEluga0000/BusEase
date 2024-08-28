@@ -31,3 +31,4 @@ export const getBusSchema = z.object({
 export const getCompanySchema = z.object({
     companyId:z.string()
 })
+

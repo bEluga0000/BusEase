@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 // "b16e871a-6e0d-4d2a-9577-f61b050190b3"
 
 // once we add all the user schema we need to return user details
-export async function GET(req: NextRequest, { params }: any) {
+export async function GET(req: NextRequest) {
     try {
         const companyId  = req.headers.get("companyId")
         const parsedData = getCompanySchema.safeParse({companyId})
