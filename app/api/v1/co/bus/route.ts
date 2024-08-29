@@ -1,8 +1,15 @@
 import { createBusSchema, getBusSchema } from "@/lib/zod/companySchema";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db"
+import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/lib/auth";
 export async function POST(req: NextRequest) {
     try {
+        const serverSession = await getServerSession(NEXT_AUTH)
+        if (!serverSession)
+            return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
+        if(serverSession.user.role == "user")
+            return NextResponse.json({ msg: "your not a company owner", err: "Access denied" }, { status: 403 })
         const companyId = req.headers.get("companyId");
         const data = await req.json()
         data.companyId = companyId
@@ -12,7 +19,8 @@ export async function POST(req: NextRequest) {
         else {
             const company = await prisma.company.update({
                 where: {
-                    companyId: parsedData.data.companyId
+                    companyId: parsedData.data.companyId,
+                    userId:serverSession.user.id
                 },
                 data: {
                     bus: {
@@ -41,6 +49,11 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
+        const serverSession = await getServerSession(NEXT_AUTH)
+        if (!serverSession)
+            return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
+        if (serverSession.user.role == "user")
+            return NextResponse.json({ msg: "your not a company owner", err: "Access denied" }, { status: 403 })
         const companyId  = req.headers.get("companyId")
         const busId = req.headers.get("busId")
         const parsedData = getBusSchema.safeParse({companyId,busId})
@@ -52,7 +65,10 @@ export async function GET(req: NextRequest) {
             {
                 const buses = await prisma.bus.findMany({
                     where: {
-                        companyId: parsedData.data.companyId
+                        companyId: parsedData.data.companyId,
+                        comapny:{
+                            userId:serverSession.user.id
+                        }
                     }
                 })
                 if (!buses)
@@ -65,7 +81,10 @@ export async function GET(req: NextRequest) {
                 const buses = await prisma.bus.findUnique({
                     where: {
                         companyId: parsedData.data.companyId,
-                        busId:parsedData.data.busId
+                        busId:parsedData.data.busId,
+                        comapny: {
+                            userId: serverSession.user.id
+                        }
                     },include:{
                         seats:true
                     }

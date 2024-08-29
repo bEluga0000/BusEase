@@ -51,6 +51,11 @@ model Seat{
   ticket Ticket?
 }
 
+enum Role{
+  admin
+  company
+  user
+}
 model User{
   id String @id
   name String
@@ -59,6 +64,7 @@ model User{
   createdAt DateTime @default(now())
   tickets Ticket[]
   company Company[]
+  role Role @default(user)
 }
 
 enum ConformationType{

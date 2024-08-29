@@ -1,11 +1,16 @@
 import { createTicketSchema } from "@/lib/zod/userSchema";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db"
+import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/lib/auth";
 export async function POST(req:NextRequest){
     // need to add the logic that the seat is booked or not on the specific day
     try{
+        const serverSession =await getServerSession(NEXT_AUTH)
+        if(!serverSession)
+            return NextResponse.json({msg:"Please Login before hitting this request",err:"Access denied"},{status:403})
         const {bookedDate,seatId} = await req.json()
-        const userId = await req.headers.get('userId')
+        const userId = serverSession.user.id
         const busId = await req.headers.get('busId')
         const parsedData = await createTicketSchema.safeParse({bookedDate ,seatId, userId, busId })
         if (!parsedData.success)

@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db"
 import { createSeatsSchema } from "@/lib/zod/companySchema";
+import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/lib/auth";
 export async function POST(req:NextRequest) {
     try {
+        const serverSession = await getServerSession(NEXT_AUTH)
+        if (!serverSession)
+            return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
+        if (serverSession.user.role == "user")
+            return NextResponse.json({ msg: "your not a company owner", err: "Access denied" }, { status: 403 })
         const companyId = req.headers.get("companyId")
         const busId = req.headers.get("busId")
         if (!companyId || !busId)
@@ -14,7 +21,9 @@ export async function POST(req:NextRequest) {
         const bus = await prisma.bus.findUnique({
             where:{
                 busId,
-                companyId
+                comapny:{
+                    userId:serverSession.user.id
+                }
             }
         }) 
         if(!bus)

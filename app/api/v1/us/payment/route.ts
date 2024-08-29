@@ -1,8 +1,13 @@
 import { createPaymentSchema } from "@/lib/zod/userSchema";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db"
+import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/lib/auth";
 export async function POST(req:NextRequest){
     try{
+        const serverSession = await getServerSession(NEXT_AUTH)
+        if (!serverSession)
+            return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
         const data = await req.json()
         const parsedData = await createPaymentSchema.safeParse(data)
         if (!parsedData.success)
@@ -11,7 +16,8 @@ export async function POST(req:NextRequest){
         {
             const ticketPrice =await prisma.ticket.findUnique({
                 where:{
-                    id:parsedData.data.ticket
+                    id:parsedData.data.ticket,
+                    userId:serverSession.user.id
                 },
                 select:{
                     bus:{
@@ -39,7 +45,7 @@ export async function POST(req:NextRequest){
                         return NextResponse.json({ msg: "Error in creating the payment" }, { status: 403 })
                     const ticket =await prisma.ticket.update({
                         where:{
-                            id:parsedData.data.ticket
+                            id:parsedData.data.ticket,
                         },data:{
                             PaymentId:payment.id,
                             conformation:"confirmed"

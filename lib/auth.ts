@@ -20,25 +20,33 @@ export const NEXT_AUTH = {
                     image:user.image
                 })
                 if(res.status >= 200 && res.status< 300)
+                {
+                    console.log(res.data.role)
+                    user.role = res.data.user.role? res.data.user.role : "user" 
                     return true
+                }
                 else
                     return false
             }catch(e){
                 return false
             }
         },
+        async jwt({ token, user }: any) {
+            if (user)
+                token.role = user.role
+            return token
+        },
         session:({session,token,user}:any)=>{
             if(session &&  session.user){
                 session.user.id = token.sub
-                console.log(session)
-                console.log(token)
+                session.user.role = token.role; 
             }
             return session
         },
         async redirect({url,baseUrl}:any){
             return baseUrl
-        }
+        },
     },pages:{
-        signIn:"/signIn"
+        signIn:"/auth"
     }
 }

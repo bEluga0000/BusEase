@@ -1,10 +1,18 @@
 import { createCompanySchema, getCompanySchema } from "@/lib/zod/companySchema";
 import { NextRequest,NextResponse} from "next/server";
 import prisma from "@/lib/db"
+import { getServerSession } from "next-auth";
+import { NEXT_AUTH } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
     try {
+        const serverSession = await getServerSession(NEXT_AUTH)
+        if (!serverSession)
+            return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
+        if (serverSession.user.role == "user")
+            return NextResponse.json({ msg: "your not a company owner", err: "Access denied" }, { status: 403 })
         const data = await req.json()
+        data.userId = serverSession.user.id
         const parsedData = createCompanySchema.safeParse(data)
         if (!parsedData.success)
             return NextResponse.json({ msg: "Enter correct values", err: parsedData.error.errors }, { status: 400 })
@@ -32,6 +40,11 @@ export async function POST(req: NextRequest) {
 // once we add all the user schema we need to return user details
 export async function GET(req: NextRequest) {
     try {
+        const serverSession = await getServerSession(NEXT_AUTH)
+        if (!serverSession)
+            return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
+        if (serverSession.user.role == "user")
+            return NextResponse.json({ msg: "your not a company owner", err: "Access denied" }, { status: 403 })
         const companyId  = req.headers.get("companyId")
         const parsedData = getCompanySchema.safeParse({companyId})
         if (!parsedData.success)
@@ -40,7 +53,8 @@ export async function GET(req: NextRequest) {
         {
             const company = await prisma.company.findUnique({
                 where: {
-                    companyId:parsedData.data.companyId
+                    companyId:parsedData.data.companyId,
+                    userId:serverSession.user.id
                 },include:{
                     user:{
                         select:{
