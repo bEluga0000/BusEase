@@ -12,7 +12,6 @@ export const NEXT_AUTH = {
     callbacks:{
         async signIn({user,account,profile}:any){
             try{
-                console.log("i am running")
                 const res = await axios.post(`${BASE_URL}/us/signin`,{
                     id:user.id,
                     name:user.name,
@@ -21,7 +20,6 @@ export const NEXT_AUTH = {
                 })
                 if(res.status >= 200 && res.status< 300)
                 {
-                    console.log(res.data.role)
                     user.role = res.data.user.role? res.data.user.role : "user" 
                     return true
                 }

@@ -17,7 +17,6 @@ export async function POST(req: NextResponse) {
                 return NextResponse.json({ msg: "User Signin successful", user: userExist }, { status: 201 })
             }
             else {
-                console.log("i am creting the user")
                 let user = await prisma.user.create({
                     data: {
                         id: parsedData.data.id,

@@ -7,7 +7,8 @@ export default function Home() {
     <div>
       BUSEASE
       <div>
-        {JSON.stringify(session)}
+        Hello world
+        {JSON.stringify(session.data?.user?.image)}
       </div>
       <div>
         <button onClick={async()=>{
