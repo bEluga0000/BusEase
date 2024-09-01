@@ -1,13 +1,11 @@
-"use client";
-import { useRouter } from "next/navigation";
-// import { useEffect } from "react";
+import SearchBar from "@/components/dashboard/searchBar";
 export default async function Home() {
   return (
     <div
       className="h-screen bg-cover bg-center"
       style={{ backgroundImage: "url('/images/homebg4.jpg')" }}
     >
-      Buse Ease app
+      <SearchBar/>
     </div>
   );
 }
