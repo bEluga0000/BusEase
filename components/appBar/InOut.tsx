@@ -6,8 +6,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 const InOut = () => {
     const serverSideSession = useSession();
-    console.log(serverSideSession);
-
     return (
         <div>
             <div className="">
