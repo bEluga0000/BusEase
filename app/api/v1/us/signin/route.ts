@@ -1,7 +1,7 @@
 import { createUserSchema } from "@/lib/zod/userSchema";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db"
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
     try {
         const data = await req.json()
         const parsedData = await createUserSchema.safeParse(data)
