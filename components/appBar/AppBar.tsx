@@ -6,7 +6,7 @@ import InOut from "./InOut";
 
 const AppBar = () => {
     return (
-        <div className="flex h-24 overflow-hidden bg-white dark:bg-[#1F1F1F] text-black dark:text-[#E0E0E0] justify-between items-center px-4 shadow-lg fixed top-0 left-0 w-full z-50">
+        <div className="flex h-24  bg-white dark:bg-[#1F1F1F] text-black dark:text-[#E0E0E0] justify-between items-center px-4 shadow-lg fixed top-0 left-0 w-full z-50">
             <div className="flex gap-10">
                 <div>
                     <AppLogoName />

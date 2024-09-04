@@ -1,10 +1,13 @@
+"use client";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
 import { FaRegUserCircle } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const Payment = () => {
+    const router = useRouter()
     return (
-        <div className="pt-28 px-5">
+        <div className="pt-28 px-5 flex flex-col sm:grid md:grid-cols-2 md:gap-2">
             <div className="flex flex-col gap-4 p-5 border rounded-lg shadow-xl dark:bg-[#1F1F1F] dark:border-[#3A3A3A] bg-white border-[#E0E0E0] dark:shadow-[0_8px_30px_rgba(0,0,0,0.9)] shadow-[0_8px_30px_rgba(0,0,0,0.1)]">
                 <div className="text-[#e27e84] dark:text-[#E27E84] font-bold text-2xl">
                     VSM Travels
@@ -67,6 +70,33 @@ const Payment = () => {
                     <div className="text-[#747f8d] dark:text-[#C5C6CE] text-lg font-extrabold">
                         USER NAME
                     </div>
+                </div>
+            </div>
+            <div className="flex flex-col text-lg p-5 border gap-2 my-5 md:my-0 bg-white dark:bg-[#1F1F1F] border-[#E0E0E0] dark:border-[#3A3A3A] shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.8)] shadow-[0_8px_30px_rgba(0,0,0,0.1)] rounded-lg">
+                <div className="text-[#d84e55] dark:text-[#e27e84] font-extrabold">
+                    FARE BREAKUP
+                </div>
+                <div className="text-[#4a4a4a] dark:text-[#E0E0E0] font-medium flex justify-between">
+                    <div>
+                        Onward Fare
+                    </div>
+                    <div>
+                        INR 682.5
+                    </div>
+                </div>
+                <div className="text-[#3e3e52] dark:text-[#E0E0E0] font-bold flex justify-between">
+                    <div>
+                        Total Payable
+                    </div>
+                    <div>
+                        INR 682.5
+                    </div>
+                </div>
+                <div className="flex justify-center bg-[#7494cc] dark:bg-[#5872a8] py-2 rounded-lg font-black text-xl uppercase cursor-pointer transition-all duration-300 hover:bg-[#597bbc] dark:hover:bg-[#4d6d9e] relative mt-3" onClick={()=>{
+                    router.push("/successfull")
+                }}>
+                    Pay Now
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-[2px] bg-white dark:bg-[#E0E0E0] transition-all duration-300 hover:w-full"></div>
                 </div>
             </div>
         </div>
