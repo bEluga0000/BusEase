@@ -21,7 +21,10 @@ export const createPaymentSchema = z.object({
     }),
     amount:z.number()
 })
-
+export const getUserBusSchema = z.object({
+    from: z.string(),
+    to: z.string()
+})
 // model Payment{
 //   id String @id @default (uuid())
 //   Amount Int

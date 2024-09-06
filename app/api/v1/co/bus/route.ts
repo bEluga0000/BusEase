@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "@/lib/auth";
 export async function POST(req: NextRequest) {
     try {
-        const serverSession = await getServerSession(NEXT_AUTH)
+        const serverSession = await getServerSession({req,...NEXT_AUTH})
         if (!serverSession)
             return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
         if(serverSession.user.role == "user")
@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
     try {
-        const serverSession = await getServerSession(NEXT_AUTH)
+        const serverSession = await getServerSession({req,...NEXT_AUTH})
+        console.log(serverSession)
         if (!serverSession)
             return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
         if (serverSession.user.role == "user")

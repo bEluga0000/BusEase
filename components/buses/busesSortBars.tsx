@@ -3,11 +3,11 @@ import { MdBusAlert } from "react-icons/md";
 import { GiDuration } from "react-icons/gi";
 import { PiCurrencyInrFill } from "react-icons/pi";
 import { MdAirlineSeatReclineNormal } from "react-icons/md";
-const BusesSortBar = () => {
+const BusesSortBar = ({len}:{len:number}) => {
     return <div className="md:grid md:grid-cols-12 p-3 flex flex-col gap-3 md:gap-0">
         <div className="col-span-3 flex gap-3 justify-center">
             <div className="font-bold text-lg">
-                39 buses
+                {len} buses
             </div>
             <div className="text-lg">
                 Found
