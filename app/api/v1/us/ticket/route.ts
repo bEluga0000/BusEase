@@ -10,16 +10,15 @@ export async function POST(req: NextRequest) {
         if (!serverSession)
             return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 });
 
-        const { bookedDate, seatIds } = await req.json();
+        const { bookedDate, seatIds ,fare} = await req.json();
         const userId = serverSession.user.id;
-        // const userId = req.headers.get("userId");
         const busId = req.headers.get('busId');
 
         if (!busId || !userId)
             return NextResponse.json({ msg: "Bus ID and User ID are required", err: "Bus ID or User ID not provided" }, { status: 400 });
 
         // Validate the input
-        const parsedData = await createTicketSchema.safeParse({ bookedDate, seatIds, userId, busId });
+        const parsedData = await createTicketSchema.safeParse({ bookedDate, seatIds, userId, busId,fare });
         if (!parsedData.success)
             return NextResponse.json({ msg: "Send correct input values", err: parsedData.error.errors }, { status: 400 });
 
@@ -47,6 +46,7 @@ export async function POST(req: NextRequest) {
                 userId: parsedData.data.userId,   
                 busId: parsedData.data.busId,     
                 bookedDate: parsedData.data.bookedDate,  
+                fare:parsedData.data.fare,
                 seats: {
                     connect: parsedData.data.seatIds.map(seatId => ({ seatId })),
                 },

@@ -2,9 +2,37 @@
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
 import { FaRegUserCircle } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import axios from "axios";
+import { BASE_URL } from "@/lib/urls";
 
+interface ticket{
+    id: string,
+    conformation: string,
+    // "2024-09-07T10:30:00.000Z"
+    bookedDate: string,
+    cancelledDate: null|string,
+    refundId: null|string,
+    PaymentId: null|string,
+    userId: string,
+    busId: string,
+    seats: [
+        {
+            seatNo: number,
+            position: string
+        }
+    ]
+}
 const Payment = () => {
+    const {ticketId} = useParams()
+    useEffect(()=>{
+        const init = async ()=>{
+            const res = await axios.get(`${BASE_URL}/us/ticket/${ticketId}`)
+            console.log(res)
+        }
+        init()
+    },[])
     const router = useRouter()
     return (
         <div className="pt-28 px-5 flex flex-col sm:grid md:grid-cols-2 md:gap-2">

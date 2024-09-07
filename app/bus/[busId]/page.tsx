@@ -18,6 +18,7 @@ const BusDetail = () => {
     const [reachDate, setReachDate] = useState<string>("")
     const[selected,setSelected] = useState<number>(0)
     const [selectedId,setSelectedId] = useState<string[]>([])
+    const [totalFare,setTotalFare] = useState<number>(0)
     const calculateReachTime = (departureTime:string, journeyTime:number) => {
         const [hours, minutes] = departureTime.split(":").map(Number);
         const departureDate = new Date(rDate);
@@ -56,6 +57,10 @@ const BusDetail = () => {
         }
         init()
     }, [])
+    useEffect(()=>{
+        if(bus)
+            setTotalFare(bus.price * selected) 
+    },[selected])
     return <div className="pt-24">
         {
             loading && <div>Loading ....</div>
@@ -107,7 +112,7 @@ const BusDetail = () => {
                             </div>
                             <div className="flex gap-1 font-bold dark:text-[#E0E0E0] text-[#393229]">
                                 <div>INR</div>
-                                <div>{bus.price*selected}</div>
+                                <div>{totalFare}</div>
                             </div>
                         </div>
                         <div className="flex justify-center">
@@ -118,7 +123,8 @@ const BusDetail = () => {
                                 console.log(isoDate)
                                 const res = await axios.post(`${BASE_URL}/us/ticket`,{
                                     seatIds:selectedId,
-                                    bookedDate:isoDate
+                                    bookedDate:isoDate,
+                                    fare: totalFare
                                 },{
                                     headers:{
                                         busId:bus.busId

@@ -11,7 +11,8 @@ export const createTicketSchema = z.object({
     userId:z.string(),
     bookedDate:z.string(),
     seatIds:z.array(z.string()),
-    busId:z.string()
+    busId:z.string(),
+    fare:z.number()
 })
 
 export const createPaymentSchema = z.object({

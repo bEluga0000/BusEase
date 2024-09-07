@@ -79,6 +79,7 @@ model Ticket {
   id             String     @id @default(uuid())
   conformation   ConformationType @default(paymentNotDone)
   bookedDate     DateTime   @default(now())
+  fare            Int ?
   cancelledDate  DateTime?
   refundId       String?    @unique
   refund         Refund?    @relation(fields: [refundId], references: [id])
