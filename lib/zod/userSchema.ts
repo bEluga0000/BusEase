@@ -35,6 +35,10 @@ export const getRazorOrderSchema = z.object({
     partial_payment: z.boolean().optional(),
     first_payment_min_amount: z.number().optional(),
 })
+export const AddPaymentIdSchema = z.object({
+    PaymentId:z.string(),
+    amount:z.number()
+})
 // model Payment{
 //   id String @id @default (uuid())
 //   Amount Int

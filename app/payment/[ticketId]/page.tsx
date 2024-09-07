@@ -178,10 +178,7 @@ const Payment = () => {
                                 const res = await axios.post(`${BASE_URL}/us/razor/order`,{
                                     amount:ticket.fare*100,
                                     currency: "INR",
-                                    // receipt:ticket.id,
-                                    receipt:"great123",
-                                    partial_payment: true,
-                                    first_payment_min_amount: 10,
+                                    receipt:ticket.id,
                                 })
                                 if(!res.data){
                                     console.log("something went wrong")
@@ -195,7 +192,11 @@ const Payment = () => {
                                         "description":"BUSEASE Test Transaction",
                                         "image":"https://i.postimg.cc/nV94ZSH0/logo.png",
                                         "order_id":res.data.order.id,
-                                        "handler": function (response: any) {
+                                        "handler":async function (response: any) {
+                                            await axios.patch(`${BASE_URL}/us/ticket/${ticket.id}`,{
+                                                PaymentId: response.razorpay_payment_id,
+                                                amount:ticket.fare
+                                            })
                                             router.push("/successfull")
                                         },
                                         "prefill":{

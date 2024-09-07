@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
         console.log(parsedData.data.userId,  
             parsedData.data.busId,     
              parsedData.data.bookedDate,)
-        // Create the ticket
         const ticket = await prisma.ticket.create({
             data: {
                 userId: parsedData.data.userId,   
@@ -75,5 +74,52 @@ export async function POST(req: NextRequest) {
     } catch (e: any) {
         return NextResponse.json({ msg: "Internal server Error", err: e.message }, { status: 500 });
     }
+}
+export async function GET(req:NextRequest){
+    try{
+        const serverSideSession = await getServerSession(NEXT_AUTH)
+        if (!serverSideSession)
+            return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 });
+        const userId = serverSideSession.user.id
+        const tickets = await prisma.ticket.findMany({
+            where:{
+                userId
+            },
+            select:{
+                id:true,
+                bookedDate:true,
+                fare:true,
+                conformation:true,
+                bus:{
+                    select:{
+                        departureTime:true,
+                        from:true,
+                        destination:true,
+                        busNumber:true,
+                        comapny:{
+                            select:{
+                                name:true
+                            }
+                        }
+
+                    }
+                },
+                seats:{
+                    select:{
+                        seatNo:true,
+                        position:true
+                    }
+                }
+            }
+        })
+        if(!tickets)
+            return NextResponse.json({ msg: "Error while getting the ticket" }, { status: 404 });
+        else
+            return NextResponse.json({ msg: "Tickets Found",tickets }, { status: 201 });
+    }
+    catch (e: any) {
+        return NextResponse.json({ msg: "Internal server Error", err: e.message }, { status: 500 });
+    }
+
 }
 
