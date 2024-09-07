@@ -6,13 +6,14 @@ import { NEXT_AUTH } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
     try {
-        const serverSession = await getServerSession(NEXT_AUTH)
-        if (!serverSession)
-            return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
-        if (serverSession.user.role == "user")
-            return NextResponse.json({ msg: "your not a company owner", err: "Access denied" }, { status: 403 })
+        // const serverSession = await getServerSession(NEXT_AUTH)
+        // if (!serverSession)
+        //     return NextResponse.json({ msg: "Please Login before hitting this request", err: "Access denied" }, { status: 403 })
+        // if (serverSession.user.role == "user")
+        //     return NextResponse.json({ msg: "your not a company owner", err: "Access denied" }, { status: 403 })
         const data = await req.json()
-        data.userId = serverSession.user.id
+        // data.userId = serverSession.user.id
+        data.userId = await req.headers.get("userId")
         const parsedData = createCompanySchema.safeParse(data)
         if (!parsedData.success)
             return NextResponse.json({ msg: "Enter correct values", err: parsedData.error.errors }, { status: 400 })

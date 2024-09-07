@@ -16,6 +16,8 @@ const BusDetail = () => {
     const rDate = useRecoilValue(datestate)
     const [arrivalTime, setArrivalTime] = useState("")
     const [reachDate, setReachDate] = useState<string>("")
+    const[selected,setSelected] = useState<number>(0)
+    const [selectedId,setSelectedId] = useState<string[]>([])
     const calculateReachTime = (departureTime:string, journeyTime:number) => {
         const [hours, minutes] = departureTime.split(":").map(Number);
         const departureDate = new Date(rDate);
@@ -45,7 +47,6 @@ const BusDetail = () => {
                 else {
                     setBus(res.data.bus)
                     calculateReachTime(res.data.bus.departureTime,res.data.bus.journeyTime)
-                    console.log(res.data.bus)
                 }
             } catch (e) {
                 console.log(e)
@@ -63,19 +64,22 @@ const BusDetail = () => {
             !loading && !bus && <div>Something went wrong try to add the home button in this</div>
         }
         {
-            !loading && bus && <div >
+            !loading && bus && <div className="">
                 <div className="sm:grid sm:grid-cols-2 flex flex-col gap-2 p-2">
-                    <div className="text-lg font-bold text-center uppercase">
-                        Seats
-                    </div>
-                    <div className="grid grid-cols-4 md:grid-cols-6 gap-1 place-items-center lg:grid-cols-8 border py-1 border-black dark:border-white">
-                        {bus.seats.map((s)=>{
-                            return <div>
-                                <Seat booked={ isSeatBooked(s.datesBooked, rDate)} position={s.position} seatId={s.seatId} seatNo={s.seatNo}/>
-                            </div>
-                        })}
+                    <div>
+                        <div className="text-lg font-bold text-center uppercase">
+                            Seats
+                        </div>
+                        <div className="grid grid-cols-4 md:grid-cols-6 gap-1  lg:grid-cols-8  py-1 border-black dark:border-white p-2">
+                            {bus.seats.map((s) => {
+                                return <div>
+                                    <Seat booked={isSeatBooked(s.datesBooked, rDate)} position={s.position} seatId={s.seatId} seatNo={s.seatNo} selected={selected} setSelected={setSelected} selectedId={selectedId} setSelectedId={setSelectedId}/>
+                                </div>
+                            })}
 
+                        </div>
                     </div>
+                    
                     <div className="border flex flex-col p-3 sm:gap-6 gap-4 dark:bg-[#1F1F1F] dark:border-[#3A3A3A] bg-white border-[#E0E0E0] rounded-sm shadow-xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.9)] shadow-[0_8px_30px_rgba(0,0,0,0.1)]">
                         <div className="text-xl font-bold text-center">
                             {bus.comapny.name}
@@ -103,13 +107,29 @@ const BusDetail = () => {
                             </div>
                             <div className="flex gap-1 font-bold dark:text-[#E0E0E0] text-[#393229]">
                                 <div>INR</div>
-                                <div>500.00</div>
+                                <div>{bus.price*selected}</div>
                             </div>
                         </div>
                         <div className="flex justify-center">
-                            <div className="px-3 py-2 font-bold bg-[#d84e55] text-[#fdffff] rounded-md border border-[#c0383f] cursor-pointer" onClick={() => {
-                                router.push("/payment/1")
-                            }}>Proceed To Book</div>
+                            <button className="px-3 py-2 font-bold bg-[#d84e55] text-[#fdffff] rounded-md border border-[#c0383f] cursor-pointer disabled:cursor-not-allowed" onClick={async() => {
+                                let isoDate = new Date(rDate)
+                                isoDate.setUTCHours(10, 30, 0, 0);
+                                isoDate.toISOString()
+                                console.log(isoDate)
+                                const res = await axios.post(`${BASE_URL}/us/ticket`,{
+                                    seatIds:selectedId,
+                                    bookedDate:isoDate
+                                },{
+                                    headers:{
+                                        busId:bus.busId
+                                    }
+                                })
+                                if(!res.data.ticketId)
+                                    console.log("something wnt wrong")
+                                else
+                                    router.push(`/payment/${res.data.ticketId}`)   
+                            }}
+                            disabled={selected === 0}>Proceed To Book</button>
                         </div>
                     </div>
                 </div>

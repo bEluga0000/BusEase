@@ -10,7 +10,7 @@ export const createUserSchema = z.object({
 export const createTicketSchema = z.object({
     userId:z.string(),
     bookedDate:z.string(),
-    seatId:z.string(),
+    seatIds:z.array(z.string()),
     busId:z.string()
 })
 

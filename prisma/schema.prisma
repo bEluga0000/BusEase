@@ -22,33 +22,34 @@ model Company{
   bus Bus[]
 }
 
-model Bus{
-  busId String @id @default(uuid())
-  busNumber String @unique
-  busDriver String?
-  from String
+model Bus {
+  busId      String   @id @default(uuid())
+  busNumber  String   @unique
+  busDriver  String?
+  from       String
   destination String
   departureTime String
-  journeyTime Float
-  price Int
-  companyId String
-  comapny Company @relation(fields: [companyId],references: [companyId],onDelete: Cascade)
-  seats Seat[]
-  ticket Ticket?
+  journeyTime  Float
+  price       Int
+  companyId   String
+  comapny     Company @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  seats       Seat[]
+  tickets     Ticket[]
 }
 // Seat Schema
 enum Position {
   ws
   ms
 }
-model Seat{
-  seatId String @id @default(cuid())
-  position Position
+model Seat {
+  seatId      String  @id @default(cuid())
+  position    Position
   datesBooked DateTime[]
-  busId String
-  seatNo Int @unique
-  bus Bus @relation(fields: [busId],references: [busId],onDelete: Cascade)
-  ticket Ticket?
+  busId       String
+  seatNo      Int     @unique
+  bus         Bus     @relation(fields: [busId], references: [busId], onDelete: Cascade)
+  ticketId    String?
+  ticket      Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
 
 enum Role{
@@ -73,21 +74,21 @@ enum ConformationType{
   cancelled
   paymentNotDone
 }
-model Ticket{
-  id String @id @default(uuid())
-  conformation ConformationType @default(paymentNotDone)
-  bookedDate DateTime @default(now())
-  cancelledDate DateTime?
-  refundId String? @unique
-  refund Refund? @relation(fields: [refundId],references: [id])
-  PaymentId String? @unique
-  payment Payment? @relation(fields: [PaymentId],references: [id])
-  userId String
-  user User @relation(fields: [userId],references: [id],onDelete: Cascade)
-  seatId String @unique
-  seat Seat @relation(fields: [seatId],references: [seatId])
-  busId String @unique
-  bus Bus @relation(fields: [busId],references: [busId])
+
+model Ticket {
+  id             String     @id @default(uuid())
+  conformation   ConformationType @default(paymentNotDone)
+  bookedDate     DateTime   @default(now())
+  cancelledDate  DateTime?
+  refundId       String?    @unique
+  refund         Refund?    @relation(fields: [refundId], references: [id])
+  PaymentId      String?    @unique
+  payment        Payment?   @relation(fields: [PaymentId], references: [id])
+  userId         String
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  busId          String
+  bus            Bus        @relation(fields: [busId], references: [busId], onDelete: Cascade)
+  seats          Seat[]    
 }
 
 enum Methods{
