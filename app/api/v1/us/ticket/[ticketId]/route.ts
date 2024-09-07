@@ -33,9 +33,21 @@ export async function GET(req: NextRequest, { params }: { params: { ticketId: st
                         destination:true,
                         price:true,
                         busNumber:true,
-                        
+                        departureTime:true,
+                        comapny:{
+                            select:{
+                                name:true
+                            }
+                        }
+                    }
+                },
+                user:{
+                    select:{
+                        name:true,
+                        email:true
                     }
                 }
+
             }
         });
 

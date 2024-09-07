@@ -26,6 +26,15 @@ export const getUserBusSchema = z.object({
     from: z.string(),
     to: z.string()
 })
+export const getRazorOrderSchema = z.object({
+    amount:z.number(),
+    currency: z.enum(["INR"]).refine((val) => ["INR"].includes(val), {
+        message: "You can only add the string `INR`",
+    }),
+    receipt:z.string(),
+    partial_payment: z.boolean().optional(),
+    first_payment_min_amount: z.number().optional(),
+})
 // model Payment{
 //   id String @id @default (uuid())
 //   Amount Int
