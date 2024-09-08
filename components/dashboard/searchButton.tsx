@@ -15,7 +15,7 @@ const SearchButton = ()=>{
             
     },[from,to])
     const route = useRouter()
-    return <button className="flex  items-center justify-center text-[#fcf8fc] font-extrabold text-lg dark:text-[#E0E0E0] cursor-pointer disabled:cursor-not-allowed" onClick={()=>{
+    return <button className="flex  items-center justify-center text-[#fcf8fc] font-extrabold text-lg dark:text-[#E0E0E0] cursor-pointer disabled:cursor-not-allowed w-full" onClick={()=>{
         route.push("/buses")
     }} disabled={disable}>
         SEARCH BUSES

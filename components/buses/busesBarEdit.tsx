@@ -16,8 +16,9 @@ interface BusesBarEditProps{
     setTo: (value: string) => void;
     setBuses: (value:BusesSchema[])=>void
     setLoading:(value:boolean)=>void
+    setErr:(value:boolean)=>void
 }
-const BusesBarEdit = ({from,to,date,setModifyCard,setDate,setFrom,setTo,setBuses,setLoading}:BusesBarEditProps) => {
+const BusesBarEdit = ({from,to,date,setModifyCard,setDate,setFrom,setTo,setBuses,setLoading,setErr}:BusesBarEditProps) => {
     const today = new Date().toISOString().split("T")[0]
     const[fromIn,setFromIn] = useState(from)
     const[toIn,setToIn]  = useState(to)
@@ -90,12 +91,16 @@ const BusesBarEdit = ({from,to,date,setModifyCard,setDate,setFrom,setTo,setBuses
                         setTo(toIn)
                         setFrom(fromIn)
                         try {
-                            const res = await axios.get(`${BASE_URL}/us/busFromTo?from=${fromIn}&to=${toIn}`)
+                            setLoading(true)
+                            const res = await axios.get(`${BASE_URL}/us/busFromTo?from=${fromIn}&to=${toIn}&date=${dateIn}`)
                             if (!res.data)
                                 throw new Error("We didnt got the response")
-                            else
+                            else {
+                                setErr(false)
                                 setBuses(res.data.buses)
+                            }
                         } catch (e: any) {
+                            setErr(true)
                             console.log("Soething went wrong", e.message)
                         }
                         finally {
@@ -180,12 +185,16 @@ const BusesBarEdit = ({from,to,date,setModifyCard,setDate,setFrom,setTo,setBuses
                         setTo(toIn)
                         setFrom(fromIn)
                         try {
-                            const res = await axios.get(`${BASE_URL}/us/busFromTo?from=${fromIn}&to=${toIn}`)
+                            setLoading(true)
+                            const res = await axios.get(`${BASE_URL}/us/busFromTo?from=${fromIn}&to=${toIn}&date=${dateIn}`)
                             if (!res.data)
                                 throw new Error("We didnt got the response")
-                            else
+                            else {
+                                setErr(false)
                                 setBuses(res.data.buses)
+                            }
                         } catch (e: any) {
+                            setErr(true)
                             console.log("Soething went wrong", e.message)
                         }
                         finally {

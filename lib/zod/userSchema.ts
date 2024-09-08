@@ -24,7 +24,8 @@ export const createPaymentSchema = z.object({
 })
 export const getUserBusSchema = z.object({
     from: z.string(),
-    to: z.string()
+    to: z.string(),
+    date:z.string()
 })
 export const getRazorOrderSchema = z.object({
     amount:z.number(),

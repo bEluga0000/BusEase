@@ -6,9 +6,12 @@ export interface BusesSchema {
     departureTime: string,
     price: number,
     journeyTime: number,
-    comapny: {
+    company: {
         name: string
     }
+    totalSeats: number,
+    availableSeatsCount: number,
+    bookedSeatsCount: number
 }
 export interface BusDetailSchema {
     busId: string
