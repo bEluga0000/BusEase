@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
+    "@types/date-fns": "^2.6.0",
     "axios": "^1.7.4",
     "heroicons": "^2.1.5",
     "next": "14.2.5",

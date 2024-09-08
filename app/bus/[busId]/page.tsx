@@ -1,16 +1,20 @@
 "use client";
 import Seat from "@/components/busDetail/seats"
+import BusDestailLD from "@/components/loading/busDetailLD";
 import { datestate } from "@/lib/atoms/atom";
 import { BusDetailSchema } from "@/lib/Types/apiCall";
 import { BASE_URL } from "@/lib/urls";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { format, addHours, parse } from 'date-fns';
 
 const BusDetail = () => {
     const router = useRouter()
     const { busId } = useParams();
+    const session = useSession()
     const [bus, setBus] = useState<BusDetailSchema | null>(null)
     const [loading, setLoading] = useState(true)
     const rDate = useRecoilValue(datestate)
@@ -19,18 +23,29 @@ const BusDetail = () => {
     const[selected,setSelected] = useState<number>(0)
     const [selectedId,setSelectedId] = useState<string[]>([])
     const [totalFare,setTotalFare] = useState<number>(0)
-    const calculateReachTime = (departureTime:string, journeyTime:number) => {
-        const [hours, minutes] = departureTime.split(":").map(Number);
-        const departureDate = new Date(rDate);
-        departureDate.setHours(hours, minutes, 0, 0);
-        const arrivalDate = new Date(departureDate.getTime() + journeyTime * 36000000);
-        const arrivalHours = String(arrivalDate.getHours()).padStart(2, '0');
-        const day = String(arrivalDate.getDate()).padStart(2, '0');
-        const month = arrivalDate.toLocaleString('en-US', { month: 'short' });
-        const arrivalMinutes = String(arrivalDate.getMinutes()).padStart(2, '0');
-        setReachDate(`${day} ${month}`)
+    const[err,setErr] = useState(false)
+    const[dformat,setDformat] = useState("")
+    const[rformat,setRformat] = useState("")
+    const formattedDateTime = (departureTime: string, journeyTime: number, rDate: string) => {
+        // Parse the rDate into a Date object
+        const journeyDate = parse(rDate, 'yyyy-MM-dd', new Date());
 
-        return setArrivalTime(`${arrivalHours}:${arrivalMinutes}`);
+        // Combine rDate and departureTime to create a Date object for departure
+        const departureDateTime = new Date(`${rDate}T${departureTime}:00`);
+
+        // Calculate arrival time by adding journeyTime hours to the departure time
+        const arrivalDateTime = addHours(departureDateTime, journeyTime);
+
+        // Format departure time as HH:mm a (dd MMM)
+        const formattedDeparture = format(departureDateTime, 'hh:mm a (dd MMM)');
+
+        // Format arrival time as HH:mm a (dd MMM)
+        const formattedArrival = format(arrivalDateTime, 'hh:mm a (dd MMM)');
+
+        return {
+            departure: formattedDeparture,
+            arrival: formattedArrival
+        };
     };
     const isSeatBooked = (datesBooked:string[], dateToCheck:string) => {
         // Convert dateToCheck to ISO format
@@ -46,30 +61,45 @@ const BusDetail = () => {
                 if (!res.data.bus)
                     throw new Error("Something went wrong in finding the answer")
                 else {
+                    setErr(false)
                     setBus(res.data.bus)
-                    calculateReachTime(res.data.bus.departureTime,res.data.bus.journeyTime)
+                    const {departure,arrival} = formattedDateTime(res.data.bus.departureTime,res.data.bus.journeyTime,rDate)
+                    setDformat(departure)
+                    setRformat(arrival)
                 }
             } catch (e) {
+                setErr(true)
                 console.log(e)
             } finally {
                 setLoading(false)
             }
         }
-        init()
-    }, [])
+        if(session)
+            init()
+            
+    }, [session])
     useEffect(()=>{
         if(bus)
             setTotalFare(bus.price * selected) 
     },[selected])
     return <div className="pt-24">
         {
-            loading && <div>Loading ....</div>
+            session.status == "loading"  &&  <BusDestailLD/>
         }
         {
-            !loading && !bus && <div>Something went wrong try to add the home button in this</div>
+            session.status =="unauthenticated" && <div className="w-full text-center">Login By clicking Google button on the App Bar</div>
         }
         {
-            !loading && bus && <div className="">
+            session.status == "authenticated" && loading && <BusDestailLD/>
+        }
+        {
+            session.status == "authenticated" && !loading && err && <div className="w-full h-full flex items-center justify-center">Something Went Wrong</div>
+        }
+        {
+            session.status == "authenticated" && !loading && !err && !bus && <div>Something went wrong try to add the home button in this</div>
+        }
+        {
+            session.status == "authenticated" && !loading && !err && bus && <div className="">
                 <div className="sm:grid sm:grid-cols-2 flex flex-col gap-2 p-2">
                     <div>
                         <div className="text-lg font-bold text-center uppercase">
@@ -94,13 +124,13 @@ const BusDetail = () => {
                         </div>
                         <div className="flex justify-between text-lg">
                             <div className="text-[#6279a2] font-base">{bus.from}</div>
-                            <div className="font-bold dark:text-[#E0E0E0] text-[#393229]">{bus.departureTime}{parseFloat(bus.departureTime) > 12 ? "PM" :"AM"}</div>
+                            <div className="font-bold dark:text-[#E0E0E0] text-[#393229]">{dformat}</div>
                         </div>
                         <div className="flex justify-between text-lg">
                             <div className="text-[#6279a2] font-base">{bus.destination}</div>
                             <div className="flex font-bold">
-                                <div className="dark:text-[#E0E0E0] text-[#393229]">{arrivalTime}</div>
-                                <div className="text-red-500">({reachDate})</div>
+                                <div className="dark:text-[#E0E0E0] text-[#393229]">{rformat}</div>
+                                {/* <div className="text-red-500">({reachDate})</div> */}
                             </div>
                         </div>
                         <hr className="border-[#E0E0E0] dark:border-[#3A3A3A]" />

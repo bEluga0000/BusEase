@@ -9,6 +9,8 @@ import { BASE_URL } from "@/lib/urls";
 import { useRecoilValue } from "recoil";
 import { datestate } from "@/lib/atoms/atom";
 import Script from "next/script";
+import { useSession } from "next-auth/react";
+import PaymnetLD from "@/components/loading/paymentLD";
 
 declare global {
     interface Window {
@@ -49,11 +51,20 @@ interface ticketSchema {
 
 }
 const Payment = () => {
+    const session = useSession()
     const { ticketId } = useParams()
     const [ticket, setTicket] = useState<ticketSchema | null>(null)
     const rDate = useRecoilValue(datestate)
     const [loading, setLoading] = useState(true)
     const[isPProcssing,setIsProcessing]  = useState(false)
+    const reverseDate = (dateString: string): string => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const year = date.getFullYear();
+
+        return `${day}-${month}-${year}`;
+    };
     useEffect(() => {
         const init = async () => {
             try {
@@ -64,6 +75,7 @@ const Payment = () => {
                 else
                     setTicket(res.data.ticket)
             } catch (e) {
+                setTicket(null)
                 console.log(e)
             }
             finally {
@@ -77,13 +89,19 @@ const Payment = () => {
         <div className="pt-28 ">
             <Script src="https://checkout.razorpay.com/v1/checkout.js" />
             {
-                loading && <div>Loading ....</div>
+                session.status == "loading" && <PaymnetLD/>
             }
             {
-                !loading && !ticket && <div>Something went wrong</div>
+                session.status == "unauthenticated" && <div className="w-full text-center">Login By clicking Google button on the App Bar</div>
             }
             {
-                !loading && ticket && <div className="px-5 flex flex-col sm:grid md:grid-cols-2 md:gap-2">
+                session.status == "authenticated" && loading && <PaymnetLD/>
+            }
+            {
+                session.status == "authenticated" && !loading && !ticket && <div>Something went wrong</div>
+            }
+            {
+                session.status == "authenticated" && !loading && ticket && <div className="px-5 flex flex-col sm:grid md:grid-cols-2 md:gap-2">
                     <div className="flex flex-col gap-4 p-5 border rounded-lg shadow-xl dark:bg-[#1F1F1F] dark:border-[#3A3A3A] bg-white border-[#E0E0E0] dark:shadow-[0_8px_30px_rgba(0,0,0,0.9)] shadow-[0_8px_30px_rgba(0,0,0,0.1)]">
                         <div className="text-[#e27e84] dark:text-[#E27E84] font-bold text-2xl">
                             {ticket.bus.comapny.name}
@@ -99,7 +117,7 @@ const Payment = () => {
                                         Departure
                                     </div>
                                     <div className="text-[#49495b] dark:text-[#C5C6CE] font-medium">
-                                        {rDate}
+                                        {reverseDate(ticket.bookedDate)}
                                     </div>
                                     <div className="text-[#414155] dark:text-[#E0E0E0] font-extrabold">
                                         {ticket.bus.departureTime} {parseInt(ticket.bus.departureTime) >12 ?"pm":"am"}

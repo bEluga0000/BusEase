@@ -18,7 +18,8 @@ const BusesLD = () => {
                         baseColor="var(--skeleton-base-color)"
                         highlightColor="var(--skeleton-highlight-color)"
                     />
-                ))}
+                ))
+            }
         </div>
     </div>
 }
