@@ -39,6 +39,9 @@ export const AddPaymentIdSchema = z.object({
     PaymentId:z.string(),
     amount:z.number()
 })
+export const CancelBookingSchema = z.object({
+    date:z.string()
+})
 // model Payment{
 //   id String @id @default (uuid())
 //   Amount Int
