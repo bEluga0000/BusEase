@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db"
 export async function POST(req: NextRequest) {
     try {
+        console.log("i am getting the requests")
         const data = await req.json()
         const parsedData = await createUserSchema.safeParse(data)
         if (!parsedData.success)
@@ -26,7 +27,10 @@ export async function POST(req: NextRequest) {
                     }
                 })
                 if (!user)
+                {
+                    console.log("Error is bcz of me")
                     return NextResponse.json({ msg: "Error in Creating user" }, { status: 403 })
+                }
                 else
                     return NextResponse.json({ msg: "User Created Successfully", user }, { status: 201 })
             }
