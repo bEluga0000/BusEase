@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
             const company = await prisma.company.update({
                 where: {
                     companyId: parsedData.data.companyId,
-                    userId:serverSession.user.id
+                    userId: serverSession.user.id
                 },
                 data: {
                     bus: {
@@ -33,10 +33,12 @@ export async function POST(req: NextRequest) {
                             price: parsedData.data.price,
                         }
                     }
-                }, include: {
+                },
+                include: {
                     bus: true
                 }
-            })
+            });
+
             if (!company)
                 return NextResponse.json({ msg: "Something went wrong while adding Bus" }, { status: 400 })
             else
