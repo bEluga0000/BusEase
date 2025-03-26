@@ -6,7 +6,7 @@ import { BusDetailSchema } from "@/lib/Types/apiCall";
 import { BASE_URL } from "@/lib/urls";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { format, addHours, parse } from 'date-fns';
@@ -27,19 +27,14 @@ const BusDetail = () => {
     const[dformat,setDformat] = useState("")
     const[rformat,setRformat] = useState("")
     const formattedDateTime = (departureTime: string, journeyTime: number, rDate: string) => {
-        // Parse the rDate into a Date object
         const journeyDate = parse(rDate, 'yyyy-MM-dd', new Date());
 
-        // Combine rDate and departureTime to create a Date object for departure
         const departureDateTime = new Date(`${rDate}T${departureTime}:00`);
 
-        // Calculate arrival time by adding journeyTime hours to the departure time
         const arrivalDateTime = addHours(departureDateTime, journeyTime);
 
-        // Format departure time as HH:mm a (dd MMM)
         const formattedDeparture = format(departureDateTime, 'hh:mm a (dd MMM)');
 
-        // Format arrival time as HH:mm a (dd MMM)
         const formattedArrival = format(arrivalDateTime, 'hh:mm a (dd MMM)');
 
         return {
@@ -48,9 +43,7 @@ const BusDetail = () => {
         };
     };
     const isSeatBooked = (datesBooked:string[], dateToCheck:string) => {
-        // Convert dateToCheck to ISO format
         const isoDateToCheck = new Date(dateToCheck).toISOString().split('T')[0];
-        // Check if the date is in the datesBooked array
         return datesBooked.some(date => new Date(date).toISOString().split('T')[0] === isoDateToCheck);
     };
 
@@ -103,7 +96,7 @@ const BusDetail = () => {
                 <div className="sm:grid sm:grid-cols-2 flex flex-col gap-2 p-2">
                     <div>
                         <div className="text-lg font-bold text-center uppercase">
-                            Seats
+                            Seats 
                         </div>
                         <div className="grid grid-cols-4 md:grid-cols-6 gap-1  lg:grid-cols-8  py-1 border-black dark:border-white p-2">
                             {bus.seats.map((s) => {
@@ -114,10 +107,9 @@ const BusDetail = () => {
 
                         </div>
                     </div>
-                    
                     <div className="border flex flex-col p-3 sm:gap-6 gap-4 dark:bg-[#1F1F1F] dark:border-[#3A3A3A] bg-white border-[#E0E0E0] rounded-sm shadow-xl dark:shadow-[0_10px_40px_rgba(0,0,0,0.9)] shadow-[0_8px_30px_rgba(0,0,0,0.1)]">
                         <div className="text-xl font-bold text-center">
-                            {bus.comapny.name}
+                            {bus.company.name}
                         </div>
                         <div className="flex font-bold text-lg dark:text-[#E0E0E0] text-[#393229]">
                             <div>Boarding and Dropping</div>

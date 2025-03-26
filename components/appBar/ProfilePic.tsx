@@ -6,7 +6,6 @@ import { FaRegUserCircle } from "react-icons/fa";
 
 const ProfilePic = async () => {
     const serverSideSession: any = await getServerSession(NEXT_AUTH);
-
     return (
         <div>
             {serverSideSession && (

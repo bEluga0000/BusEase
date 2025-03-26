@@ -21,7 +21,7 @@ export interface BusDetailSchema {
     departureTime: string,
     price: number,
     journeyTime: number,
-    comapny: {
+    company: {
         name: string
     }
     seats:Seat[]
