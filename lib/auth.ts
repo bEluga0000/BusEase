@@ -20,7 +20,7 @@ export const NEXT_AUTH = {
                     image:user.image
                 })
                 console.log("loging responsee",res)
-                if(res.status >= 200 && res.status< 300)
+                if(res.status >= 200 && res.status< 320)
                 {
                     user.role = res.data.user.role? res.data.user.role : "user" 
                     return true
