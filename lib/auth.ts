@@ -46,5 +46,6 @@ export const NEXT_AUTH = {
         },
     },pages:{
         signIn:"/auth"
-    }
+    },
+    debug: true,
 }
