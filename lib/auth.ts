@@ -11,6 +11,7 @@ export const NEXT_AUTH = {
     ], secret: process.env.NEXTAUTH_SECRET,
     callbacks:{
         async signIn({user,account,profile}:any){
+            console.log(user)
             try{
                 const res = await axios.post(`${BASE_URL}/us/signin`,{
                     id:user.id,
