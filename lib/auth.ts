@@ -28,6 +28,7 @@ export const NEXT_AUTH = {
                 else
                     return false
             }catch(e){
+                console.log(e)
                 return false
             }
         },
